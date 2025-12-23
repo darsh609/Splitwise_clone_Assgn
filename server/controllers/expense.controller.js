@@ -218,6 +218,24 @@ exports.getGroupUserSummary = async (req, res) => {
   });
 };
 
+exports.deleteExpense = async (req, res) => {
+  const { expenseId } = req.params;
+
+  const expense = await Expense.findById(expenseId);
+
+  if (!expense) {
+    return res.status(404).json({ message: "Expense not found" });
+  }
+
+  await Expense.findByIdAndDelete(expenseId);
+
+  res.json({
+    message: "Expense deleted successfully",
+    expenseId
+  });
+};
+
+
 
 
 

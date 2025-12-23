@@ -5,6 +5,7 @@ import api from "../services/api";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { Users, Plus, X, DollarSign, Receipt, TrendingUp } from 'lucide-react';
+import { Trash2 } from "lucide-react";
 export default function GroupPage() {
   const { groupId } = useParams();
   const [selectedSplitUsers, setSelectedSplitUsers] = useState([]);
@@ -19,6 +20,17 @@ const [groupName, setGroupName] = useState("");
   const [amount, setAmount] = useState("");
   const [paidBy, setPaidBy] = useState("");
   const [splitType, setSplitType] = useState("EQUAL");
+const handleDeleteExpense = async (expenseId) => {
+  const ok = window.confirm("Delete this expense?");
+  if (!ok) return;
+
+  try {
+    await api.delete(`/expenses/${expenseId}`);
+    setExpenses(prev => prev.filter(e => e._id !== expenseId));
+  } catch (err) {
+    alert("Failed to delete expense");
+  }
+};
 
   const toggleSplitUser = (userId) => {
     // Prevent unchecking if user is the payer
@@ -388,7 +400,7 @@ const [groupName, setGroupName] = useState("");
                   key={exp._id}
                   className="group bg-gradient-to-br from-slate-800/50 to-slate-900/50 hover:from-slate-800/70 hover:to-slate-900/70 backdrop-blur-xl border border-slate-700/50 hover:border-purple-500/50 rounded-2xl p-6 shadow-xl transition-all duration-300 hover:scale-[1.01]"
                 >
-                  <div className="flex items-start justify-between mb-3">
+                  {/* <div className="flex items-start justify-between mb-3">
                     <div>
                       <p className="text-xl font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">
                         ₹{exp.amount.toLocaleString()}
@@ -398,7 +410,33 @@ const [groupName, setGroupName] = useState("");
                     <span className="bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full text-xs font-medium">
                       {exp.splitType}
                     </span>
-                  </div>
+                  </div> */}
+                  <div className="flex items-start justify-between mb-3">
+  <div>
+    <p className="text-xl font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">
+      ₹{exp.amount.toLocaleString()}
+    </p>
+    <p className="text-gray-300 font-medium mt-1">
+      {exp.description}
+    </p>
+  </div>
+
+  <div className="flex items-center gap-3">
+    <span className="bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full text-xs font-medium">
+      {exp.splitType}
+    </span>
+
+    {/* Delete Icon */}
+    <button
+      onClick={() => handleDeleteExpense(exp._id)}
+      className="opacity-0 group-hover:opacity-100 transition text-red-400 hover:text-red-500"
+      title="Delete Expense"
+    >
+      <Trash2 size={18} />
+    </button>
+  </div>
+</div>
+
                   
                   <div className="flex items-center gap-2 mb-3 pb-3 border-b border-slate-700/50">
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center text-xs font-bold">
