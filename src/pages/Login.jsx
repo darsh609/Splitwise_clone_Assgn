@@ -299,12 +299,12 @@ export default function Login() {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-xs text-slate-500 mt-6">
+        {/* <p className="text-center text-xs text-slate-500 mt-6">
           Protected by reCAPTCHA and subject to the{" "}
           <a href="#" className="text-slate-400 hover:text-slate-300 transition-colors">Privacy Policy</a>
           {" "}and{" "}
           <a href="#" className="text-slate-400 hover:text-slate-300 transition-colors">Terms of Service</a>
-        </p>
+        </p> */}
       </div>
     </div>
   );
