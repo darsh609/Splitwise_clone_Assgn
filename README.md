@@ -1,38 +1,59 @@
 
-# 💸 Splitwise Clone – Expense Sharing App (Backend Oriented)
 
-A full-stack Splitwise-like application with a **backend-first design**, built using **Node.js, Express, MongoDB, and JWT authentication**, with a React frontend consuming REST APIs.
+# 💸 CredResolve – Splitwise-Style Expense Sharing Backend
 
-This project focuses on **API design, data consistency, authorization, and real-world backend workflows** like group expenses, settlements, and balance tracking.
+CredResolve is a **backend-oriented expense sharing system** inspired by Splitwise.
+It allows users to create groups, add shared expenses, settle balances, and track who owes whom — all via clean, well-structured REST APIs.
 
----
-
-## 🚀 Live URLs
-
-* **Backend API (Primary Focus)**
-  👉 [https://splitwise-clone-assgn-1.onrender.com/api](https://splitwise-clone-assgn-1.onrender.com/api)
-
-* **Frontend**
-  👉 [https://splitwise-clone-assgn-frontend.onrender.com](https://splitwise-clone-assgn-frontend.onrender.com) *(if applicable)*
+The frontend is only a consumer of these APIs.
+The **core of this project is the backend architecture and API design**.
 
 ---
 
-## 📌 Backend Overview
+## 🚀 Live Deployment
 
-* RESTful APIs built using **Express**
-* MongoDB used for persistence via **Mongoose**
-* JWT used for authentication and route protection
-* All expense, balance, and settlement operations are **API-driven**
-* Frontend acts only as a consumer of backend APIs
+* **Backend API Base URL**
+
+  ```
+  https://splitwise-clone-assgn-1.onrender.com/api
+  ```
+* **Frontend URL**
+```
+https://splitwise-clone-assgn.vercel.app/
+```
+  
 
 ---
 
-## ⚙️ Backend Setup Instructions
+## 🧠 What This Project Demonstrates
+
+* RESTful API design
+* JWT-based authentication
+* Group-scoped data isolation
+* Expense splitting (equal, exact, percentage)
+* Settlement tracking
+* Balance computation after expenses + settlements
+* Real-world backend flows (delete cascades, auth checks)
+
+---
+
+## 📁 Tech Stack (Backend)
+
+* **Node.js**
+* **Express**
+* **MongoDB + Mongoose**
+* **JWT Authentication**
+* **bcrypt** for password hashing
+* **nodemon** for development
+
+---
+
+## ⚙️ Running the Backend Locally
 
 ### 1️⃣ Clone the repository
 
 ```bash
-git clone <repo-url>
+git clone <your-repo-url>
 cd server
 ```
 
@@ -42,21 +63,28 @@ cd server
 npm install
 ```
 
-### 3️⃣ Configure environment variables (`.env`)
+### 3️⃣ Create `.env` file
+
+Create a `.env` file in the `server` folder with the following keys:
 
 ```env
-MONGODB_URL=mongodb+srv://darshkumar0609_db_user:WmLxQQ2WzlDuP77g@cluster0.hvcej3p.mongodb.net/SplitwiseDb
+MONGODB_URL=<your_mongodb_connection_string>
 PORT=5000
-JWT_SECRET=FullStackByDarsh
+JWT_SECRET=<your_secret_key>
 ```
 
-### 4️⃣ Run the backend server
+> ⚠️ Values are intentionally not included.
+> Use your own MongoDB Atlas / local MongoDB instance.
+
+---
+
+### 4️⃣ Start the backend
 
 ```bash
 npm run dev
 ```
 
-Server will start at:
+Server will run on:
 
 ```
 http://localhost:5000/api
@@ -64,38 +92,24 @@ http://localhost:5000/api
 
 ---
 
-## 📦 Backend Dependencies
+## 🔐 Authentication Flow (Start Here)
 
-```json
-"dependencies": {
-  "bcrypt": "^6.0.0",
-  "cors": "^2.8.5",
-  "dotenv": "^17.2.3",
-  "express": "^5.2.1",
-  "jsonwebtoken": "^9.0.3",
-  "mongoose": "^9.0.2",
-  "nodemon": "^3.1.11"
-}
-```
+All protected APIs require a JWT token.
 
----
-
-## 🔐 Authentication Flow (API Usage)
-
-1. **Register User**
+### 1️⃣ Register a user
 
 ```
-POST /api/auth/register
+POST /users/register
 ```
 
-2. **Login User**
+### 2️⃣ Login
 
 ```
-POST /api/auth/login
+POST /users/login
 ```
 
-* Response includes a **JWT token**
-* Token must be sent in headers for protected routes:
+* Response includes a JWT token
+* Use this token for all future requests:
 
 ```
 Authorization: Bearer <token>
@@ -103,89 +117,135 @@ Authorization: Bearer <token>
 
 ---
 
-## 👥 Group APIs
+## 👥 Group APIs (Second Step)
 
-### Create Group
+### Create a Group
 
 ```
-POST /api/groups
+POST /groups
 ```
 
-* Auth required
-* Logged-in user is auto-added to the group
+* Logged-in user is automatically added
+* Additional members can be passed in request body
+
+---
 
 ### Get My Groups
 
 ```
-GET /api/groups/my-groups
+GET /groups/my-groups
 ```
+
+Returns only groups where the logged-in user is a member.
+
+---
 
 ### Get Group Members
 
 ```
-GET /api/groups/:groupId/members
+GET /groups/:groupId/members
 ```
+
+Used by frontend to:
+
+* Show members
+* Add expenses
+* Create settlements
+
+---
 
 ### Delete Group
 
 ```
-DELETE /api/groups/:groupId
+DELETE /groups/:groupId
 ```
 
-* Deletes:
+> This also deletes:
 
-  * Group
-  * All related expenses
-  * All related settlements
+* All expenses of the group
+* All settlements of the group
 
 ---
 
-## 💰 Expense APIs
+## 💰 Expense APIs (Core Feature)
 
 ### Add Expense
 
 ```
-POST /api/expenses
+POST /expenses
 ```
 
-Supports:
+Supported split types:
 
 * `EQUAL`
 * `EXACT`
 * `PERCENTAGE`
 
+The backend validates:
+
+* Amount consistency
+* Split totals
+* Group membership
+
+---
+
 ### Get Group Expenses
 
 ```
-GET /api/expenses/group/:groupId
+GET /expenses/group/:groupId
 ```
+
+Returns:
+
+* Expense details
+* Who paid
+* Who owes how much
+
+---
 
 ### Delete Expense
 
 ```
-DELETE /api/expenses/:expenseId
+DELETE /expenses/:expenseId
 ```
+
+Used when an expense was added incorrectly.
 
 ---
 
-## 📊 Balance APIs
+## 📊 Balance APIs (Computation Layer)
 
 ### Get Group Balances
 
 ```
-GET /api/expenses/group/:groupId/balances
+GET /expenses/group/:groupId/balances
 ```
 
-### Get Logged-in User Overall Balance
+Returns:
+
+* Final pairwise balances
+* After cancelling mutual debts
+* After applying settlements
+
+---
+
+### Get Logged-in User Balance (Across All Groups)
 
 ```
-GET /api/expenses/user/:userId/balance
+GET /expenses/user/:userId/balance
 ```
 
-### Get User Balance in a Group
+Returns:
+
+* `youOwe`
+* `youAreOwed`
+
+---
+
+### Get User Balance in a Specific Group
 
 ```
-GET /api/expenses/group/:groupId/user/:userId
+GET /expenses/group/:groupId/user/:userId
 ```
 
 ---
@@ -195,70 +255,87 @@ GET /api/expenses/group/:groupId/user/:userId
 ### Add Settlement
 
 ```
-POST /api/settlements
+POST /settlements
 ```
+
+Used when one user pays another to settle dues.
+
+---
 
 ### Get My Settlements
 
 ```
-GET /api/settlements/my-settlements
+GET /settlements/my-settlements
 ```
+
+Returns:
+
+* Settlements where user is sender or receiver
+* Group information included
+
+---
 
 ### Delete Settlement
 
 ```
-DELETE /api/settlements/:settlementId
+DELETE /settlements/:settlementId
 ```
 
 ---
 
-## 🧪 Testing the Backend
+## 🧪 How to Test the APIs
 
-You can test all APIs using:
+Recommended tools:
 
 * **Postman**
 * **Thunder Client**
 * **cURL**
 
-Make sure to:
+Suggested testing order:
 
-* Login first
-* Copy JWT token
-* Add token to Authorization header for protected routes
+1. Register & Login
+2. Create Group
+3. Add Expense
+4. View Group Expenses
+5. Check Balances
+6. Add Settlement
+7. Re-check Balances
 
 ---
 
-## 🔄 Frontend ↔ Backend Connection
+## 🔗 Frontend Integration
 
-Frontend uses:
+Frontend connects via:
 
 ```env
-REACT_APP_BASE_URL=https://splitwise-clone-assgn-1.onrender.com/api
+REACT_APP_BASE_URL=<backend_api_url>
 ```
 
-All API calls are made using **Axios**, and tokens are stored in `localStorage`.
+All requests:
+
+* Use Axios
+* Attach JWT token
+* Consume backend responses directly
 
 ---
 
-## 📌 Why This Backend Design?
+## 🧩 Project Philosophy
 
-* Clear separation of concerns
-* Scalable REST API structure
-* Secure authorization checks at route level
-* Designed to work independently of frontend
-* Can easily be used by:
+This project is designed to:
 
-  * Web apps
-  * Mobile apps
-  * Other clients
+* Be backend-first
+* Work independently of frontend
+* Scale to mobile or other clients
+* Reflect real-world expense workflows
 
 ---
 
 ## 👨‍💻 Author
 
 **Darsh Kumar**
-Final Year B.Tech Student
+Final Year B.Tech
 NIT Warangal
 
-> This assignment demonstrates my understanding of backend development, API design, authentication, and real-world data handling.
+> Built as a backend-focused assignment to demonstrate API design, authentication, and data consistency in real applications.
+
 
