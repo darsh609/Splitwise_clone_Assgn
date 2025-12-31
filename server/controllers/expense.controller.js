@@ -1,9 +1,6 @@
 const Expense = require("../models/Expense");
 const User = require("../models/User");
 const {
-//   calculateGroupBalances,
-//   simplifyBalances,
-//   applySettlements,
 
 calculatePairwiseBalances,
     cancelMutualDebts,
@@ -13,8 +10,6 @@ calculatePairwiseBalances,
 const Settlement = require("../models/Settlement");
 
 const { validateExpense } = require("../utils/validateExpense");
-
-
 
 exports.addExpense = async (req, res) => {
     validateExpense(req.body);
@@ -52,8 +47,6 @@ exports.addExpense = async (req, res) => {
 
 
 
-
-
 exports.getGroupExpenses = async (req, res) => {
  
   const { groupId } = req.params;
@@ -70,21 +63,21 @@ exports.getGroupExpenses = async (req, res) => {
 exports.getGroupBalances = async (req, res) => {
   const { groupId } = req.params;
 
-  // 1️⃣ Fetch group expenses
+  // 1️ Fetch group expenses
   const expenses = await Expense.find({ group: groupId })
     .populate("paidBy")
     .populate("splits.user");
 
-  // 2️⃣ Fetch group settlements
+  // 2️ Fetch group settlements
   const settlements = await Settlement.find({ group: groupId });
 
-  // 3️⃣ Build pairwise ledger
+  // 3️ Build pairwise ledger
   let ledger = calculatePairwiseBalances(expenses);
 
-  // 4️⃣ Cancel mutual debts (CRITICAL)
+  // 4️ Cancel mutual debts (CRITICAL)
   ledger = cancelMutualDebts(ledger);
 
-  // 5️⃣ Apply settlements one by one
+  // 5️ Apply settlements one by one
   settlements.forEach(s => {
     ledger = applySettlement(ledger, {
       from: s.from?.toString(),
@@ -102,19 +95,19 @@ exports.getGroupBalances = async (req, res) => {
 exports.getUserBalanceView = async (req, res) => {
   const { userId } = req.params;
 
-  // 1️⃣ Fetch all expenses
+  // 1️ Fetch all expenses
   const expenses = await Expense.find({})
     .populate("paidBy", "name")
     .populate("splits.user", "name");
 
-  // 2️⃣ Fetch all settlements
+  // 2️ Fetch all settlements
   const settlements = await Settlement.find({});
 
-  // 3️⃣ Build ledger
+  // 3️ Build ledger
   let ledger = calculatePairwiseBalances(expenses);
   ledger = cancelMutualDebts(ledger);
 
-  // 4️⃣ Apply settlements
+  // 4️ Apply settlements
   settlements.forEach(s => {
     ledger = applySettlement(ledger, {
       from: s.from?.toString(),
@@ -123,7 +116,7 @@ exports.getUserBalanceView = async (req, res) => {
     });
   });
 
-  // 5️⃣ Extract user-specific view
+  // 5️ Extract user-specific view
   
 const users = await User.find({}).select("_id name");
 
@@ -167,19 +160,19 @@ const users = await User.find({}).select("_id name");
 exports.getGroupUserSummary = async (req, res) => {
   const { groupId, userId } = req.params;
 
-  // 1️⃣ Fetch group expenses
+  // 1️ Fetch group expenses
   const expenses = await Expense.find({ group: groupId })
     .populate("paidBy")
     .populate("splits.user");
 
-  // 2️⃣ Fetch group settlements
+  // 2️ Fetch group settlements
   const settlements = await Settlement.find({ group: groupId });
 
-  // 3️⃣ Build ledger
+  // 3️ Build ledger
   let ledger = calculatePairwiseBalances(expenses);
   ledger = cancelMutualDebts(ledger);
 
-  // 4️⃣ Apply settlements
+  // 4️ Apply settlements
   settlements.forEach(s => {
     ledger = applySettlement(ledger, {
       from: s.from.toString(),
@@ -188,7 +181,7 @@ exports.getGroupUserSummary = async (req, res) => {
     });
   });
 
-  // 5️⃣ Extract only this user
+  // 5️ Extract only this user
   const youOwe = [];
   const youAreOwed = [];
 

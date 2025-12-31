@@ -207,7 +207,8 @@ const handleDeleteGroup = async (e, groupId) => {
             )}
 
             {/* You Are Owed Details */}
-            {balance.youAreOwed.length > 0 && (
+            {
+            balance.youAreOwed.length > 0 && (
               <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 backdrop-blur-sm">
                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                   <ArrowDownLeft className="w-5 h-5 text-green-400" />
@@ -222,7 +223,8 @@ const handleDeleteGroup = async (e, groupId) => {
                   ))}
                 </div>
               </div>
-            )}
+            )
+            }
           </div>
         )}
 

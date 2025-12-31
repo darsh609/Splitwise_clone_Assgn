@@ -63,14 +63,16 @@ const handleDeleteExpense = (expenseId) => {
       return;
     }
 
-    setSelectedSplitUsers(prev =>
+    setSelectedSplitUsers(
+      prev =>
       prev.includes(userId)
         ? prev.filter(id => id !== userId)
         : [...prev, userId]
     );
 
     // Clear split value if user is removed
-    if (selectedSplitUsers.includes(userId)) {
+    if (selectedSplitUsers.includes(userId))
+       {
       setSplitValues(prev => {
         const updated = { ...prev };
         delete updated[userId];
@@ -424,17 +426,7 @@ const handleDeleteExpense = (expenseId) => {
                   key={exp._id}
                   className="group bg-gradient-to-br from-slate-800/50 to-slate-900/50 hover:from-slate-800/70 hover:to-slate-900/70 backdrop-blur-xl border border-slate-700/50 hover:border-purple-500/50 rounded-2xl p-6 shadow-xl transition-all duration-300 hover:scale-[1.01]"
                 >
-                  {/* <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <p className="text-xl font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">
-                        ₹{exp.amount.toLocaleString()}
-                      </p>
-                      <p className="text-gray-300 font-medium mt-1">{exp.description}</p>
-                    </div>
-                    <span className="bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full text-xs font-medium">
-                      {exp.splitType}
-                    </span>
-                  </div> */}
+              
                   <div className="flex items-start justify-between mb-3">
   <div>
     <p className="text-xl font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">

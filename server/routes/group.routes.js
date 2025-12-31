@@ -71,7 +71,8 @@ router.get("/:groupId/members", auth, async (req, res) => {
       groupName: group.name,
       members: group.members
     });
-  } catch (err) {
+  }
+   catch (err) {
     console.error(err);
     res.status(500).json({ msg: "Failed to fetch group members" });
   }
@@ -94,19 +95,19 @@ router.delete("/:groupId", auth, async (req, res) => {
       return res.status(404).json({ msg: "Group not found" });
     }
 
-    // ✅ Authorization: only creator can delete
+    //  Authorization: only creator can delete
     if (group.createdBy.toString() !== userId.toString()) {
       await session.abortTransaction();
       return res.status(403).json({ msg: "Only group creator can delete group" });
     }
 
-    // 🔥 Delete all expenses of this group
+    //  Delete all expenses of this group
     await Expense.deleteMany({ group: groupId }).session(session);
 
-    // 🔥 Delete all settlements of this group
+    //  Delete all settlements of this group
     await Settlement.deleteMany({ group: groupId }).session(session);
 
-    // 🔥 Delete the group itself
+    //  Delete the group itself
     await Group.findByIdAndDelete(groupId).session(session);
 
     await session.commitTransaction();

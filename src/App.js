@@ -16,7 +16,9 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/login" element={
-          <OpenRoute><Login /></OpenRoute>} />
+
+          <OpenRoute><Login /></OpenRoute>
+          } />
         <Route path="/signup" element={<Signup />} />
 
         <Route
@@ -34,7 +36,7 @@ function App() {
 <Route path="/settlements" element={<Settlements />} />
 
       </Routes>
-      <ToastContainer position="top-right" autoClose={3000} />
+      <ToastContainer position="top-right" autoClose={6000} />
     </BrowserRouter>
   );
 }

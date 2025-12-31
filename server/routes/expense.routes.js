@@ -7,9 +7,7 @@ router.get("/group/:groupId",authHeader, getGroupExpenses);
 router.get("/group/:groupId/balance",authHeader, getGroupBalances);
 router.get("/user/:userId/balance", authHeader,getUserBalanceView);
 const { getGroupUserSummary } = require("../controllers/expense.controller");
-
 // router.get("/group/:groupId/user/:userId/balance",authHeader, getGroupUserSummary);
 const expenseCtrl = require("../controllers/expense.controller");
-
 router.delete("/:expenseId", authHeader, deleteExpense);
 module.exports = router;

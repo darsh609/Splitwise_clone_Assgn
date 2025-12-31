@@ -44,9 +44,6 @@ router.post("/login", async (req, res) => {
   });
 });
 
-// const express = require("express");
-
-
 router.get("/all-users", auth, async (req, res) => {
   try {
     const users = await User.find({ _id: { $ne: req.user } }).select("-password"); 

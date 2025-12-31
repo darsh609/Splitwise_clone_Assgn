@@ -1,70 +1,4 @@
 
-// exports.calculateGroupBalances = (expenses) => {
-// //   const balance = {};
-
-// //   expenses.forEach(exp => {
-// //     const paidBy = exp.paidBy._id.toString();
-
-// //     exp.splits.forEach(
-// //         split => {
-// //       const userId = split.user._id.toString();
-// //       const amount = split.amount;
-
-// //       if (userId === paidBy) return;
-
-// //       balance[userId] = (balance[userId] || 0) - amount;
-// //       balance[paidBy] = (balance[paidBy] || 0) + amount;
-// //     });
-// //   });
-
-// //   return balance;
-// // const ledger = {};
-
-// //   const addDebt = (from, to, amount) => {
-// //     if (!ledger[from]) ledger[from] = {};
-// //     ledger[from][to] = (ledger[from][to] || 0) + amount;
-// //   };
-
-// //   expenses.forEach(exp => {
-// //     const paidBy = exp.paidBy._id.toString();
-
-// //     exp.splits.forEach(split => {
-// //       const userId = split.user._id.toString();
-// //       const amount = split.amount;
-
-// //       if (userId === paidBy) return;
-
-// //       // user owes paidBy
-// //       addDebt(userId, paidBy, amount);
-// //     });
-// //   });
-
-// //   return ledger;
-
-
-
-//   const ledger = {};
-
-//   const addDebt = (from, to, amount) => {
-//     if (!ledger[from]) ledger[from] = {};
-//     ledger[from][to] = (ledger[from][to] || 0) + amount;
-//   };
-
-//   expenses.forEach(exp => {
-//     const paidBy = exp.paidBy._id.toString();
-
-//     exp.splits.forEach(split => {
-//       const userId = split.user._id.toString();
-//       if (userId === paidBy) return;
-//       addDebt(userId, paidBy, split.amount);
-//     });
-//   });
-
-//   return ledger;
-
-
-// };
-
 
 exports.calculatePairwiseBalances = (expenses) => {
   const ledger = {};
@@ -84,7 +18,6 @@ exports.calculatePairwiseBalances = (expenses) => {
     });
   });
 
-//   console.log("Calculated ledger:", ledger);
 
   return ledger;
 };
@@ -117,7 +50,7 @@ exports.cancelMutualDebts = (ledger) => {
 exports.applySettlement = (ledger, { from, to, amount }) => {
   if (!ledger) ledger = {};
 
-  // Case 1️⃣: from owes to
+  // Case 1️: from owes to
   if (ledger[from] && ledger[from][to] !== undefined) {
     ledger[from][to] -= amount;
 
@@ -146,13 +79,13 @@ exports.applySettlement = (ledger, { from, to, amount }) => {
     return ledger;
   }
 
-  // Case 2️⃣: reverse exists (to owes from)
+  // Case 2️: reverse exists (to owes from)
   if (ledger[to] && ledger[to][from] !== undefined) {
     ledger[to][from] += amount;
     return ledger;
   }
 
-  // Case 3️⃣: no relation exists
+  // Case 3️: no relation exists
   if (!ledger[to]) ledger[to] = {};
   ledger[to][from] = (ledger[to][from] || 0) + amount;
 
@@ -161,66 +94,66 @@ exports.applySettlement = (ledger, { from, to, amount }) => {
 
 
 
-exports.simplifyBalances = (balanceMap) => {
-  const debtors = [];
-  const creditors = [];
+// exports.simplifyBalances = (balanceMap) => {
+//   const debtors = [];
+//   const creditors = [];
 
-  for (let userId in balanceMap) {
-    const amount = balanceMap[userId];
+//   for (let userId in balanceMap) {
+//     const amount = balanceMap[userId];
 
-    if (amount < 0) {
-      debtors.push({ userId, amount: -amount });
-    } else if (amount > 0) {
-      creditors.push({ userId, amount });
-    }
-  }
+//     if (amount < 0) {
+//       debtors.push({ userId, amount: -amount });
+//     } else if (amount > 0) {
+//       creditors.push({ userId, amount });
+//     }
+//   }
 
-  const settlements = [];
+//   const settlements = [];
 
-  let i = 0, j = 0;
+//   let i = 0, j = 0;
 
-  while (i < debtors.length && j < creditors.length) {
-    const pay = Math.min(debtors[i].amount, creditors[j].amount);
+//   while (i < debtors.length && j < creditors.length) {
+//     const pay = Math.min(debtors[i].amount, creditors[j].amount);
 
-    settlements.push({
-      from: debtors[i].userId,
-      to: creditors[j].userId,
-      amount: pay
-    });
-
-    debtors[i].amount -= pay;
-    creditors[j].amount -= pay;
-
-    if (debtors[i].amount === 0) i++;
-    if (creditors[j].amount === 0) j++;
-  }
-
-  return settlements;
-};
-
-exports.applySettlements = (balances, settlements) => {
-  settlements.forEach(s => {
-    balances[s.from] += s.amount;
-    balances[s.to] -= s.amount;
-  });
-
-  return balances;
-};
-
-
-
-
-// exports.calculateBalances = (expenses) => {
-//   const balance = {};
-
-//   expenses.forEach(exp => {
-//     exp.splits.forEach(split => {
-//       if (split.user.toString() !== exp.paidBy.toString()) {
-//         balance[split.user] = (balance[split.user] || 0) - split.amount;
-//         balance[exp.paidBy] = (balance[exp.paidBy] || 0) + split.amount;
-//       }
+//     settlements.push({
+//       from: debtors[i].userId,
+//       to: creditors[j].userId,
+//       amount: pay
 //     });
+
+//     debtors[i].amount -= pay;
+//     creditors[j].amount -= pay;
+
+//     if (debtors[i].amount === 0) i++;
+//     if (creditors[j].amount === 0) j++;
+//   }
+
+//   return settlements;
+// };
+
+// exports.applySettlements = (balances, settlements) => {
+//   settlements.forEach(s => {
+//     balances[s.from] += s.amount;
+//     balances[s.to] -= s.amount;
 //   });
 
-//   return balance;
+//   return balances;
 // };
+
+
+
+
+// // exports.calculateBalances = (expenses) => {
+// //   const balance = {};
+
+// //   expenses.forEach(exp => {
+// //     exp.splits.forEach(split => {
+// //       if (split.user.toString() !== exp.paidBy.toString()) {
+// //         balance[split.user] = (balance[split.user] || 0) - split.amount;
+// //         balance[exp.paidBy] = (balance[exp.paidBy] || 0) + split.amount;
+// //       }
+// //     });
+// //   });
+
+// //   return balance;
+// // };
