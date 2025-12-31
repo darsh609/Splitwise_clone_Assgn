@@ -1,8 +1,8 @@
 
 
-# 💸 Group_Pay – Splitwise-Style Expense Sharing Backend
+# 💸 Group_Pay – Splitwise-Style Expense Sharing Website
 
-CredResolve is a **backend-oriented expense sharing system** inspired by Splitwise.
+GroupPay is a **backend-oriented expense sharing system** inspired by Splitwise.
 It allows users to create groups, add shared expenses, settle balances, and track who owes whom — all via clean, well-structured REST APIs.
 
 The frontend is only a consumer of these APIs.
